@@ -2011,8 +2011,22 @@ int _glfwPlatformCreateWindow(_GLFWwindow* window,
 
     if (!visual)
     {
-        visual = DefaultVisual(_glfw.x11.display, _glfw.x11.screen);
-        depth = DefaultDepth(_glfw.x11.display, _glfw.x11.screen);
+        // vulkan transparency hack
+        if (fbconfig->transparent) {
+            // don't use default visuals and always go for transparent visuals when transparent is enabled. 
+            
+            XVisualInfo vinfo;
+            if (!XMatchVisualInfo(_glfw.x11.display, _glfw.x11.screen, 32, TrueColor, &vinfo)) {
+                return GLFW_FALSE;
+            }
+            visual = vinfo.visual;
+            depth = vinfo.depth;
+        } else {
+            visual = DefaultVisual(_glfw.x11.display, _glfw.x11.screen);
+            depth = DefaultDepth(_glfw.x11.display, _glfw.x11.screen);
+        }
+        
+        
     }
 
     if (!createNativeWindow(window, wndconfig, visual, depth))
@@ -2720,6 +2734,27 @@ void _glfwPlatformSetWindowFloating(_GLFWwindow* window, GLFWbool enabled)
 
     XFlush(_glfw.x11.display);
 }
+
+
+void _glfwPlatformSetWindowMousePassthrough(_GLFWwindow* window, GLFWbool enabled)
+{
+    if (!_glfw.x11.xshape.available)
+        return;
+
+    if (enabled)
+    {
+        Region region = XCreateRegion();
+        XShapeCombineRegion(_glfw.x11.display, window->x11.handle,
+                            ShapeInput, 0, 0, region, ShapeSet);
+        XDestroyRegion(region);
+    }
+    else
+    {
+        XShapeCombineMask(_glfw.x11.display, window->x11.handle,
+                          ShapeInput, 0, 0, None, ShapeSet);
+    }
+}
+
 
 float _glfwPlatformGetWindowOpacity(_GLFWwindow* window)
 {

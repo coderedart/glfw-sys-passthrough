@@ -1,11 +1,10 @@
 [package]
-name = "glfw-sys"
+name = "glfw-sys-passthrough"
 version = "4.0.0+3.3.5"
-authors = ["Camilla Berglund <elmindreda@elmindreda.org>"]
-description = "An Open Source, multi-platform library for creating windows with OpenGL contexts and receiving input and events"
+description = "glfw-sys crate patched with passthrough feature"
 documentation = "http://www.glfw.org/documentation.html"
 homepage = "http://www.glfw.org/"
-repository = "https://github.com/PistonDevelopers/glfw-sys"
+repository = "https://github.com/coderedart/glfw-sys"
 readme = "README.md"
 license = "Zlib"
 build = "build.rs"

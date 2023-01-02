@@ -1872,6 +1872,36 @@ void _glfwPlatformSetWindowFloating(_GLFWwindow* window, GLFWbool enabled)
                  SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE);
 }
 
+void _glfwPlatformSetWindowMousePassthrough(_GLFWwindow* window, GLFWbool enabled)
+{
+    COLORREF key = 0;
+    BYTE alpha = 0;
+    DWORD flags = 0;
+    DWORD exStyle = GetWindowLongW(window->win32.handle, GWL_EXSTYLE);
+
+    if (exStyle & WS_EX_LAYERED)
+        GetLayeredWindowAttributes(window->win32.handle, &key, &alpha, &flags);
+
+    if (enabled)
+        exStyle |= (WS_EX_TRANSPARENT | WS_EX_LAYERED);
+    else
+    {
+        exStyle &= ~WS_EX_TRANSPARENT;
+        // NOTE: Window opacity also needs the layered window style so do not
+        //       remove it if the window is alpha blended
+        if (exStyle & WS_EX_LAYERED)
+        {
+            if (!(flags & LWA_ALPHA))
+                exStyle &= ~WS_EX_LAYERED;
+        }
+    }
+
+    SetWindowLongW(window->win32.handle, GWL_EXSTYLE, exStyle);
+
+    if (enabled)
+        SetLayeredWindowAttributes(window->win32.handle, key, alpha, flags);
+}
+
 float _glfwPlatformGetWindowOpacity(_GLFWwindow* window)
 {
     BYTE alpha;
