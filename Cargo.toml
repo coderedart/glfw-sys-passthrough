@@ -1,6 +1,6 @@
 [package]
 name = "glfw-sys-passthrough"
-version = "4.0.0+3.3.5"
+version = "4.0.3+3.3.5"
 description = "glfw-sys crate patched with passthrough feature"
 documentation = "http://www.glfw.org/documentation.html"
 homepage = "http://www.glfw.org/"
