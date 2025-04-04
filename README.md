@@ -1,3 +1,5 @@
+# WARNING: The main glfw-sys crate has the passthrough patches, so, this crate shall be retired.
+
 # GLFW
 
 [![Build status](https://github.com/glfw/glfw/actions/workflows/build.yml/badge.svg)](https://github.com/glfw/glfw/actions)
